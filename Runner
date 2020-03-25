@@ -1,0 +1,55 @@
+
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+public class Runner extends Application {
+
+    private final double TILE_WIDTH = 20;
+    private double TILE_HEIGHT = 20;
+    private int NUM_ROWS = 30;
+    private int NUM_COLS = 50;
+
+    private BorderPane root;
+    private GameBoard board;
+    private Display display;
+
+    private Parent setUpScene() {
+        root = new BorderPane();
+        root.setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT + 100);
+
+        display = new Display();
+        display.setTranslateY(20);
+
+        board = new GameBoard(NUM_ROWS, NUM_COLS, TILE_WIDTH, TILE_HEIGHT);
+        board.setTranslateY(100);
+
+        // Temporarily putting a Menu here.  Probably will make it its own class later.
+        Menu fileMenu = new Menu("Check it out");
+        fileMenu.getItems().add(new MenuItem("We will..."));
+        fileMenu.getItems().add(new MenuItem("...add more.."));
+        fileMenu.getItems().add(new MenuItem("...later."));
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().addAll(fileMenu);
+
+        root.setTop(menuBar);
+        root.getChildren().addAll(display, board);
+
+        return root;
+    }
+
+    public void start(Stage primaryStage) {
+        primaryStage.setScene(new Scene(setUpScene()));
+        primaryStage.setTitle("Minesweeper");
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
