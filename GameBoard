@@ -1,0 +1,35 @@
+
+import javafx.scene.layout.Pane;
+
+public class GameBoard extends Pane {
+
+    private final double TILE_WIDTH, TILE_HEIGHT;
+    private final int NUM_ROWS, NUM_COLS;
+    private Tile[][] board;
+
+    GameBoard(int numRows, int numCols, double tileWidth, double tileHeight) {
+        TILE_WIDTH = tileWidth;
+        TILE_HEIGHT = tileHeight;
+        NUM_ROWS = numRows;
+        NUM_COLS = numCols;
+        setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT + 100);
+
+        setUpBoard();
+    }
+
+    public void setUpBoard() {
+        board = new Tile[NUM_ROWS][NUM_COLS];
+
+        // Populate the board with all blank Tiles
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+                Tile tile = new Tile(TILE_WIDTH, TILE_HEIGHT, this);
+                tile.setTranslateX(col * TILE_WIDTH);
+                tile.setTranslateY(row * TILE_HEIGHT);
+
+                board[row][col] = tile;
+                getChildren().addAll(tile);
+            }
+        }
+    }
+}
