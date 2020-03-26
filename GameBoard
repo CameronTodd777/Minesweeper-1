@@ -1,5 +1,3 @@
-package Minesweeper;
-
 import javafx.scene.layout.Pane;
 
 public class GameBoard extends Pane {
