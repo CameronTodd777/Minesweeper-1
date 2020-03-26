@@ -1,3 +1,4 @@
+package Minesweeper;
 
 import javafx.scene.layout.Pane;
 
@@ -31,5 +32,9 @@ public class GameBoard extends Pane {
                 getChildren().addAll(tile);
             }
         }
+    }
+
+    public Tile[][] getBoard() {
+        return board;
     }
 }
