@@ -1,6 +1,6 @@
-
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -23,18 +23,29 @@ public class Tile extends StackPane {
         setUpBoarder();
         setUpBackground();
 
-
         label = new Label("");
         getChildren().addAll(label);
 
+        setRandom();
+
         // Just a demo to play with for now.
         setOnMouseClicked(event -> {
-            if (label.getText().equals("")) {
-                label.setText("X");
-                label.setTextFill(Color.RED);
-            } else
-                label.setText("");
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (label.getText().equals("")) {
+                    label.setText("X");
+                    label.setTextFill(Color.RED);
+                } else
+                    label.setText("");
+            } else if (event.getButton().equals(MouseButton.SECONDARY))
+                System.out.println(countNeighbors());
         });
+    }
+
+    public void setRandom() {
+        if (Math.random() < 0.5) {
+            label.setText("X");
+            label.setTextFill(Color.RED);
+        }
     }
 
     public void setUpBackground() {
@@ -53,5 +64,32 @@ public class Tile extends StackPane {
         boarder.setFill(null);
         boarder.setStroke(Color.BLACK);
         getChildren().addAll(boarder);
+    }
+
+    // Idea is to "center" yourself at position [row][col] and then check
+    // up, down, left, right etc by adding -1, 0, or 1 to row and col.
+    public int countNeighbors() {
+        Tile[][] gameBoard = this.gameBoard.getBoard();
+        int row = (int) (getTranslateY() / TILE_HEIGHT);
+        int col = (int) (getTranslateX() / TILE_WIDTH);
+
+        int count = 0;
+        for (int r = -1; r <= 1; r++) {
+            for (int c = -1; c <= 1; c++) {
+                // Don't count if position is not inbounds
+                if (!(row + r >= 0 && row + r < gameBoard.length && col + c >= 0 && col + c < gameBoard[row + r].length))
+                    continue;
+                // Don't count "yourself" the center
+                if (r == 0 && c == 0)
+                    continue;
+                else if (gameBoard[row + r][col + c].getLabel().getText().equals("X"))
+                    count++;
+            }
+        }
+        return count;
+    }
+
+    public Label getLabel() {
+        return label;
     }
 }
