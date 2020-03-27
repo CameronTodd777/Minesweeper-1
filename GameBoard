@@ -19,7 +19,7 @@ public class GameBoard extends Pane {
         setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT + 100);
 
         setUpBoard();
-        placeRandomMines(20);
+        placeRandomMines(30);
         placeNumbers();
     }
 
@@ -93,7 +93,84 @@ public class GameBoard extends Pane {
         }
     }
 
-    public Tile[][] getBoard() {
-        return board;
+    // @rotation: takes value from 0-7. 0 is due East. Increases counter clockwise
+    // Halt condition is depth == 0 && rotation > 7
+    public void clearBlanks(int row, int col, int rotation) {
+        while (rotation < 8) {
+            Tile temp = checkRotationBlank(row, col, rotation);
+            if(temp == null)
+                rotation++;
+            else if (!temp.getLabel().getText().equals("0")) {
+                temp.getLabel().setOpacity(1);
+                rotation++;
+            }
+            else {//Tile label is 0
+                temp.setAvailable(false);
+                temp.setUpBackground(Color.WHITESMOKE);
+                clearBlanks(temp.getRow(), temp.getCol(), 0);
+                // Here iff rotation > 7 one layer deeper
+                rotation++;
+            }
+        }
+        return;
     }
+
+    // Helper method
+    public Tile checkRotationBlank(int row, int col, int rotation) {
+        switch (rotation) {
+            case 0:
+                if (inBounds(row, col + 1) && board[row][col + 1].isAvailable())
+                    return board[row][col + 1];
+                else return null;
+            case 1:
+                if (inBounds(row - 1, col + 1) && board[row - 1][col + 1].isAvailable())
+                    return board[row - 1][col + 1];
+                else return null;
+            case 2:
+                if (inBounds(row - 1, col) && board[row - 1][col].isAvailable())
+                    return board[row - 1][col];
+                else return null;
+            case 3:
+                if (inBounds(row - 1, col - 1) && board[row - 1][col - 1].isAvailable())
+                    return board[row - 1][col - 1];
+                else return null;
+            case 4:
+                if (inBounds(row, col - 1) && board[row][col - 1].isAvailable())
+                    return board[row][col - 1];
+                else return null;
+            case 5:
+                if (inBounds(row + 1, col - 1) && board[row + 1][col - 1].isAvailable())
+                    return board[row + 1][col - 1];
+                else return null;
+            case 6:
+                if (inBounds(row + 1, col) && board[row + 1][col].isAvailable())
+                    return board[row + 1][col];
+                else return null;
+            case 7:
+                if (inBounds(row + 1, col + 1) && board[row + 1][col + 1].isAvailable())
+                    return board[row + 1][col + 1];
+                else return null;
+            default:
+                return null;
+        }
+    }
+
+    public boolean inBounds(int row, int col) {
+        return row >= 0 && row < board.length && col >= 0 && col < board[row].length;
+    }
+
+    public void showAllMines(){
+        for(Tile[] row: board)
+            for(Tile tile: row) {
+                if (tile.getMine() != null)
+                    tile.getMine().setOpacity(1);
+            }
+    }
+
+    public void makeAllUnavailable(){
+        for(Tile[] row: board)
+            for(Tile tile: row)
+                tile.setAvailable(false);
+    }
+
 }
