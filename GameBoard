@@ -1,4 +1,9 @@
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+
+import java.util.ArrayList;
 
 public class GameBoard extends Pane {
 
@@ -14,6 +19,8 @@ public class GameBoard extends Pane {
         setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT + 100);
 
         setUpBoard();
+        placeRandomMines(20);
+        placeNumbers();
     }
 
     public void setUpBoard() {
@@ -29,6 +36,60 @@ public class GameBoard extends Pane {
                 board[row][col] = tile;
                 getChildren().addAll(tile);
             }
+        }
+    }
+
+    // Places numbers on Tiles indicating how many adjacent mines
+    public void placeNumbers() {
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                if (!board[row][col].isMine()) {
+                    int number = countNeighbors(row, col);
+                    Label label = board[row][col].getLabel();
+                    label.setText(String.valueOf(number));
+                    label.setTextFill(Color.BLUE);
+                    label.setFont(new Font(TILE_WIDTH * 0.7));
+                    label.setOpacity(0);
+                }
+            }
+        }
+    }
+
+
+    // Used by placeNumbers()
+    public int countNeighbors(int row, int col) {
+        int count = 0;
+        for (int r = -1; r <= 1; r++) {
+            for (int c = -1; c <= 1; c++) {
+                // Don't count if position is not inbounds
+                if (!(row + r >= 0 && row + r < board.length && col + c >= 0 && col + c < board[row + r].length))
+                    continue;
+                // Don't count "yourself" the center
+                if (r == 0 && c == 0)
+                    continue;
+                else if (board[row + r][col + c].isMine())
+                    count++;
+            }
+        }
+        return count;
+    }
+
+    // Places n random mines on the board.
+    // Precondition: n < NUM_ROWS*NUM_COLS
+    public void placeRandomMines(int n) {
+        ArrayList<Integer> availableTiles = new ArrayList<>();
+        for (int i = 0; i < NUM_ROWS * NUM_COLS; i++)
+            availableTiles.add(i);
+
+        // Use i = row*NUM_COLS + col;
+        while (n > 0) {
+            int rand = availableTiles.remove((int) (Math.random() * availableTiles.size()));
+
+            // row = rand / NUM_COLS
+            // col = rand % NUM_COLS
+            board[rand / NUM_COLS][rand % NUM_COLS].setUpMineIcon();
+            board[rand / NUM_COLS][rand % NUM_COLS].getMine().setOpacity(0);
+            n--;
         }
     }
 
