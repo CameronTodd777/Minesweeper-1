@@ -16,10 +16,10 @@ public class GameBoard extends Pane {
         TILE_HEIGHT = tileHeight;
         NUM_ROWS = numRows;
         NUM_COLS = numCols;
-        setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT + 100);
+        setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT);
 
         setUpBoard();
-        placeRandomMines(25);
+        placeRandomMines(50);
         placeNumbers();
     }
 
@@ -45,9 +45,12 @@ public class GameBoard extends Pane {
             for (int col = 0; col < board[row].length; col++) {
                 if (!board[row][col].isMine()) {
                     int number = countNeighbors(row, col);
+
+                    // Here is where we put colors on the numbers.
+
                     Label label = board[row][col].getLabel();
                     label.setText(String.valueOf(number));
-                    label.setTextFill(Color.BLUE);
+                    setUpNumberColor(label, number);
                     label.setFont(new Font(TILE_WIDTH * 0.7));
                     label.setOpacity(0);
                 }
@@ -55,6 +58,24 @@ public class GameBoard extends Pane {
         }
     }
 
+    public void setUpNumberColor(Label label, int number) {
+        if (number == 1)
+            label.setTextFill(Color.BLUE);
+        else if (number == 2)
+            label.setTextFill(Color.GREEN);
+        else if (number == 3)
+            label.setTextFill(Color.RED);
+        else if (number == 4)
+            label.setTextFill(Color.PURPLE);
+        else if (number == 5)
+            label.setTextFill(Color.MAROON);
+        else if (number == 6)
+            label.setTextFill(Color.TURQUOISE);
+        else if (number == 7)
+            label.setTextFill(Color.BLACK);
+        else if (number == 8)
+            label.setTextFill(Color.GRAY);
+    }
 
     // Used by placeNumbers()
     public int countNeighbors(int row, int col) {
@@ -94,7 +115,7 @@ public class GameBoard extends Pane {
     }
 
     // @rotation: takes value from 0-7. 0 is due East. Increases counter clockwise
-    // Halt condition is depth == 0 && rotation > 7
+    // Halt condition is depth rotation > 7
     public void clearBlanks(int row, int col, int rotation) {
         while (rotation < 8) {
             Tile temp = checkRotationBlank(row, col, rotation);
@@ -102,10 +123,14 @@ public class GameBoard extends Pane {
                 rotation++;
             else if (!temp.getLabel().getText().equals("0")) {
                 temp.getLabel().setOpacity(1);
+                temp.setAvailable(false);
+                temp.setUpBackground(Color.WHITESMOKE);
+                temp.getFlag().setOpacity(0);
                 rotation++;
             } else {//Tile label is 0
                 temp.setAvailable(false);
                 temp.setUpBackground(Color.WHITESMOKE);
+                temp.getFlag().setOpacity(0);
                 clearBlanks(temp.getRow(), temp.getCol(), 0);
                 // Here iff rotation > 7 one layer deeper
                 rotation++;
@@ -164,8 +189,10 @@ public class GameBoard extends Pane {
     public void showAllMines() {
         for (Tile[] row : board)
             for (Tile tile : row) {
-                if (tile.getMine() != null)
+                if (tile.getMine() != null) {
                     tile.getMine().setOpacity(1);
+                    tile.getFlag().setOpacity(0);
+                }
             }
     }
 
@@ -173,6 +200,17 @@ public class GameBoard extends Pane {
         for (Tile[] row : board)
             for (Tile tile : row)
                 tile.setAvailable(false);
+    }
+
+    public boolean isWon() {
+        for (Tile[] row : board)
+            for (Tile tile : row) {
+                if (tile.isMine())
+                    continue;
+                else if (tile.isAvailable())
+                    return false;
+            }
+        return true;
     }
 
 }
