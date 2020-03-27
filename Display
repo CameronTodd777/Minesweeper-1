@@ -1,15 +1,31 @@
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 
-// This will store our display above the main board.
-public class Display extends HBox {
+// Stores our display above the main board.
+public class Display extends StackPane {
 
-    Text tempText;
+    Label numMines, time;
+    Button face;
 
-    Display() {
-        tempText = new Text("Here is where score and stuff will go");
-        tempText.setFont(Font.font(50));
-        getChildren().addAll(tempText);
+    Display(double width) {
+        setPrefSize(width, 80);
+
+        numMines = new Label();
+        numMines.setText("99");
+        numMines.setStyle("-fx-font-size:50");
+        setAlignment(numMines, Pos.CENTER_LEFT);
+
+        face = new Button(":)");
+        face.setStyle("-fx-font-size:14");
+        setAlignment(face, Pos.CENTER);
+
+        time = new Label("Hello");
+        time.setStyle("-fx-font-size:50");
+        time.setText("000");
+        setAlignment(time, Pos.CENTER_RIGHT);
+
+        getChildren().addAll(numMines, face, time);
     }
 }
