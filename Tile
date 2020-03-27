@@ -35,6 +35,7 @@ public class Tile extends StackPane {
                     gameBoard.makeAllUnavailable();
 
                     System.out.println("Loser!");
+                    return;
 
                 } else {
                     if (label.getText().equals("0"))
@@ -45,6 +46,12 @@ public class Tile extends StackPane {
 
                 available = false;
                 flag.setOpacity(0);
+                setUpBackground(Color.WHITESMOKE);
+                if (gameBoard.isWon()) {
+                    gameBoard.makeAllUnavailable();
+                    System.out.println("You a winner ha ha ha!");
+                }
+
             } else if (event.getButton().equals(MouseButton.SECONDARY))
                 toggleFlagIcon();
         });
@@ -96,6 +103,10 @@ public class Tile extends StackPane {
 
     public Label getLabel() {
         return label;
+    }
+
+    public Pane getFlag() {
+        return flag;
     }
 
     public boolean isBlank() {
