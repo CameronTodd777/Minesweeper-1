@@ -19,7 +19,7 @@ public class GameBoard extends Pane {
         setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT + 100);
 
         setUpBoard();
-        placeRandomMines(30);
+        placeRandomMines(25);
         placeNumbers();
     }
 
@@ -98,13 +98,12 @@ public class GameBoard extends Pane {
     public void clearBlanks(int row, int col, int rotation) {
         while (rotation < 8) {
             Tile temp = checkRotationBlank(row, col, rotation);
-            if(temp == null)
+            if (temp == null)
                 rotation++;
             else if (!temp.getLabel().getText().equals("0")) {
                 temp.getLabel().setOpacity(1);
                 rotation++;
-            }
-            else {//Tile label is 0
+            } else {//Tile label is 0
                 temp.setAvailable(false);
                 temp.setUpBackground(Color.WHITESMOKE);
                 clearBlanks(temp.getRow(), temp.getCol(), 0);
@@ -112,6 +111,9 @@ public class GameBoard extends Pane {
                 rotation++;
             }
         }
+
+        // In case it is a single blank
+        board[row][col].setUpBackground(Color.WHITESMOKE);
         return;
     }
 
@@ -159,17 +161,17 @@ public class GameBoard extends Pane {
         return row >= 0 && row < board.length && col >= 0 && col < board[row].length;
     }
 
-    public void showAllMines(){
-        for(Tile[] row: board)
-            for(Tile tile: row) {
+    public void showAllMines() {
+        for (Tile[] row : board)
+            for (Tile tile : row) {
                 if (tile.getMine() != null)
                     tile.getMine().setOpacity(1);
             }
     }
 
-    public void makeAllUnavailable(){
-        for(Tile[] row: board)
-            for(Tile tile: row)
+    public void makeAllUnavailable() {
+        for (Tile[] row : board)
+            for (Tile tile : row)
                 tile.setAvailable(false);
     }
 
