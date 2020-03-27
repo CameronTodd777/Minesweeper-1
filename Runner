@@ -9,10 +9,10 @@ import javafx.stage.Stage;
 
 public class Runner extends Application {
 
-    private final double TILE_WIDTH = 50;
-    private final double TILE_HEIGHT = 50;
-    private final int NUM_ROWS = 10;
-    private final int NUM_COLS = 20;
+    private final double TILE_WIDTH = 30;
+    private final double TILE_HEIGHT = 30;
+    private final int NUM_ROWS = 15;
+    private final int NUM_COLS = 25;
 
     private BorderPane root;
     private GameBoard board;
@@ -20,26 +20,40 @@ public class Runner extends Application {
 
     private Parent setUpScene() {
         root = new BorderPane();
-        root.setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT + 100);
+        root.setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT);
 
-        display = new Display();
-        display.setTranslateY(20);
+        display = new Display(NUM_COLS * TILE_WIDTH);
 
         board = new GameBoard(NUM_ROWS, NUM_COLS, TILE_WIDTH, TILE_HEIGHT);
-        board.setTranslateY(100);
 
-        // Temporarily putting a Menu here.  Probably will make it its own class later.
-        Menu fileMenu = new Menu("Check it out");
-        fileMenu.getItems().add(new MenuItem("We will..."));
-        fileMenu.getItems().add(new MenuItem("...add more.."));
-        fileMenu.getItems().add(new MenuItem("...later."));
+        root.setBottom(board);
+        root.setCenter(display);
+        setUpMenu();
+
+        return root;
+    }
+
+    public void setUpMenu() {
+        Menu fileMenu = new Menu("Game");
+        MenuItem replay = new MenuItem("Replay");
+        replay.setOnAction(event -> replay());
+        fileMenu.getItems().add(replay);
+
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(fileMenu);
 
         root.setTop(menuBar);
-        root.getChildren().addAll(display, board);
+    }
 
-        return root;
+    public void replay() {
+        root.getChildren().clear();
+
+        display = new Display(NUM_COLS * TILE_WIDTH);
+        board = new GameBoard(NUM_ROWS, NUM_COLS, TILE_WIDTH, TILE_HEIGHT);
+        setUpMenu();
+
+        root.setBottom(board);
+        root.setCenter(display);
     }
 
     public void start(Stage primaryStage) {
