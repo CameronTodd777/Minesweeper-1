@@ -1,0 +1,78 @@
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
+
+// Static class containing the mine and flag icons.
+public class Icon {
+
+    public static Pane drawFlag(double TILE_WIDTH, double TILE_HEIGHT) {
+        Pane flag = new Pane();
+
+        // Two rectangles for the base, 1 rectangle for pole
+        Rectangle baseWide = new Rectangle(0.25 * TILE_WIDTH,
+                .70 * TILE_HEIGHT,
+                TILE_WIDTH * 0.5,
+                TILE_HEIGHT * 0.1);
+        Rectangle baseSkinny = new Rectangle(baseWide.getX() + baseWide.getWidth() * 0.25,
+                baseWide.getY() - baseWide.getHeight() * 0.7,
+                baseWide.getWidth() * 0.5,
+                baseWide.getHeight() * 0.7);
+        Rectangle pole = new Rectangle(TILE_WIDTH * 0.5 - TILE_WIDTH * 0.07 * 0.5,
+                TILE_HEIGHT * 0.25,
+                TILE_WIDTH * 0.07,
+                TILE_HEIGHT * 0.5);
+
+        // Triangle for red flag
+        // Top point, bottom point, middle point
+        Polygon triangle = new Polygon(pole.getX() + pole.getWidth(), TILE_HEIGHT * 0.2,
+                pole.getX() + pole.getWidth(), TILE_HEIGHT * 0.5,
+                baseWide.getX(), (TILE_HEIGHT * 0.2 + TILE_HEIGHT * 0.5) * 0.5);
+        triangle.setFill(Color.RED);
+
+        flag.getChildren().addAll(baseWide, baseSkinny, pole, triangle);
+        return flag;
+    }
+
+    public static Pane drawMine(double TILE_WIDTH, double TILE_HEIGHT) {
+        Pane mine = new Pane();
+
+        Ellipse ellipse = new Ellipse(TILE_WIDTH * 0.5,
+                TILE_HEIGHT * 0.5,
+                TILE_WIDTH * 0.25,
+                TILE_HEIGHT * 0.25);
+        ellipse.setFill(Color.BLACK);
+
+        Rectangle rectangle = new Rectangle(TILE_WIDTH * 0.35,
+                TILE_HEIGHT * 0.35,
+                TILE_WIDTH * 0.08,
+                TILE_HEIGHT * 0.08);
+        rectangle.setFill(Color.WHITE);
+
+        // Draw 4 lines in + and x shapes
+        Line backSlash = new Line(TILE_WIDTH * 0.25,
+                TILE_HEIGHT * 0.25,
+                TILE_WIDTH * 0.75,
+                TILE_HEIGHT * 0.75);
+
+        Line forwardSlash = new Line(TILE_WIDTH * 0.75,
+                TILE_HEIGHT * 0.25,
+                TILE_WIDTH * 0.25,
+                TILE_HEIGHT * 0.75);
+
+        Line vertical = new Line(TILE_WIDTH * 0.5,
+                TILE_HEIGHT * 0.15,
+                TILE_WIDTH * 0.5,
+                TILE_HEIGHT * 0.85);
+
+        Line horizontal = new Line(TILE_WIDTH * 0.15,
+                TILE_HEIGHT * 0.5,
+                TILE_WIDTH * 0.85,
+                TILE_HEIGHT * 0.5);
+
+        mine.getChildren().addAll(backSlash, forwardSlash, vertical, horizontal, ellipse, rectangle);
+        return mine;
+    }
+}
