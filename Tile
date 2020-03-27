@@ -1,51 +1,64 @@
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Tile extends StackPane {
     private final double TILE_WIDTH, TILE_HEIGHT;
     private GameBoard gameBoard;
-
-    // Just for a demo
+    private Pane mine, flag;
     private Label label;
+    private boolean available;
 
     Tile(double tileWidth, double tileHeight, GameBoard gameBoard) {
         TILE_WIDTH = tileWidth;
         TILE_HEIGHT = tileHeight;
         this.gameBoard = gameBoard;
+        available = true;
 
         setUpBoarder();
         setUpBackground();
+        setUpFlagIcon();
 
         label = new Label("");
         getChildren().addAll(label);
 
-        setRandom();
 
-        // Just a demo to play with for now.
         setOnMouseClicked(event -> {
+            if (available == false)
+                return;
             if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (label.getText().equals("")) {
-                    label.setText("X");
-                    label.setTextFill(Color.RED);
+                if (isMine()) {
+                    mine.setOpacity(1);
+                    System.out.println("Loser!");
                 } else
-                    label.setText("");
+                    label.setOpacity(1);
+
+                available = false;
+                flag.setOpacity(0);
             } else if (event.getButton().equals(MouseButton.SECONDARY))
-                System.out.println(countNeighbors());
+                toggleFlagIcon();
         });
     }
 
-    public void setRandom() {
-        if (Math.random() < 0.5) {
-            label.setText("X");
-            label.setTextFill(Color.RED);
-        }
+    public void toggleFlagIcon() {
+        if (flag.getOpacity() == 0)
+            flag.setOpacity(1);
+        else flag.setOpacity(0);
+    }
+
+    public void setUpMineIcon() {
+        mine = Icon.drawMine(TILE_WIDTH, TILE_HEIGHT);
+        mine.setOpacity(0);
+        getChildren().addAll(mine);
+    }
+
+    public void setUpFlagIcon() {
+        flag = Icon.drawFlag(TILE_WIDTH, TILE_HEIGHT);
+        flag.setOpacity(0);
+        getChildren().addAll(flag);
     }
 
     public void setUpBackground() {
@@ -66,27 +79,12 @@ public class Tile extends StackPane {
         getChildren().addAll(boarder);
     }
 
-    // Idea is to "center" yourself at position [row][col] and then check
-    // up, down, left, right etc by adding -1, 0, or 1 to row and col.
-    public int countNeighbors() {
-        Tile[][] board = gameBoard.getBoard();
-        int row = (int) (getTranslateY() / TILE_HEIGHT);
-        int col = (int) (getTranslateX() / TILE_WIDTH);
+    public boolean isMine() {
+        return mine != null;
+    }
 
-        int count = 0;
-        for (int r = -1; r <= 1; r++) {
-            for (int c = -1; c <= 1; c++) {
-                // Don't count if position is not inbounds
-                if (!(row + r >= 0 && row + r < board.length && col + c >= 0 && col + c < board[row + r].length))
-                    continue;
-                // Don't count "yourself" the center
-                if (r == 0 && c == 0)
-                    continue;
-                else if (board[row + r][col + c].getLabel().getText().equals("X"))
-                    count++;
-            }
-        }
-        return count;
+    public Pane getMine() {
+        return mine;
     }
 
     public Label getLabel() {
