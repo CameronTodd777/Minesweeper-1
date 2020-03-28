@@ -30,6 +30,7 @@ public class Tile extends StackPane {
                 return;
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (isMine()) {
+                    gameBoard.getDisplay().stopTimer();
                     setUpBackground(Color.RED);
                     gameBoard.showAllMines();
                     gameBoard.makeAllUnavailable();
@@ -38,6 +39,7 @@ public class Tile extends StackPane {
                     return;
 
                 } else {
+                    gameBoard.getDisplay().startTimer();
                     if (label.getText().equals("0")) {
                         gameBoard.clearBlanks(getRow(), getCol(), 0);
                         gameBoard.getDisplay().setNumMinesText(gameBoard.getNumMines());
@@ -54,6 +56,7 @@ public class Tile extends StackPane {
                 flag.setOpacity(0);
                 setUpBackground(Color.WHITESMOKE);
                 if (gameBoard.isWon()) {
+                    gameBoard.getDisplay().stopTimer();
                     gameBoard.makeAllUnavailable();
                     System.out.println("You a winner ha ha ha!");
                 }
@@ -119,10 +122,6 @@ public class Tile extends StackPane {
 
     public Pane getFlag() {
         return flag;
-    }
-
-    public boolean isBlank() {
-        return label.getText().equals("0");
     }
 
     public void setAvailable(boolean available) {
