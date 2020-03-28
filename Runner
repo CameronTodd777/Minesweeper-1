@@ -1,10 +1,15 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Runner extends Application {
@@ -13,34 +18,39 @@ public class Runner extends Application {
     private final double TILE_HEIGHT = 30;
     private final int NUM_ROWS = 15;
     private final int NUM_COLS = 25;
+    private final int startMines = 50;
 
     private BorderPane root;
-    private GameBoard board;
+    private GameBoard gameBoard;
     private Display display;
 
     private Parent setUpScene() {
         root = new BorderPane();
-        root.setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT);
+        root.setPrefSize(NUM_COLS * TILE_WIDTH + 20, NUM_ROWS * TILE_HEIGHT);
+        root.setPadding(new Insets(0, 10, 10, 10));
+        //      root.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         display = new Display(NUM_COLS * TILE_WIDTH);
+        gameBoard = new GameBoard(NUM_ROWS, NUM_COLS, TILE_WIDTH, TILE_HEIGHT, startMines, display);
 
-        board = new GameBoard(NUM_ROWS, NUM_COLS, TILE_WIDTH, TILE_HEIGHT);
 
-        root.setBottom(board);
+        root.setBottom(gameBoard);
         root.setCenter(display);
         setUpMenu();
 
         return root;
     }
 
-    public void setUpMenu() {
+    private void setUpMenu() {
         Menu fileMenu = new Menu("Game");
         MenuItem replay = new MenuItem("Replay");
         replay.setOnAction(event -> replay());
         fileMenu.getItems().add(replay);
 
+
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(fileMenu);
+        //  menuBar.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
         root.setTop(menuBar);
     }
@@ -49,12 +59,115 @@ public class Runner extends Application {
         root.getChildren().clear();
 
         display = new Display(NUM_COLS * TILE_WIDTH);
-        board = new GameBoard(NUM_ROWS, NUM_COLS, TILE_WIDTH, TILE_HEIGHT);
+        gameBoard = new GameBoard(NUM_ROWS, NUM_COLS, TILE_WIDTH, TILE_HEIGHT, startMines, display);
         setUpMenu();
 
-        root.setBottom(board);
+        root.setBottom(gameBoard);
         root.setCenter(display);
     }
+
+
+    //  ******* Display Class ***********************
+    public class Display extends StackPane {
+        Label numMines, time;
+        Button face;
+
+        Display(double width) {
+            setPrefSize(width, 80);
+            setPadding(new Insets(10, 10, 10, 10));
+
+            BackgroundFill background_fill = new BackgroundFill(Color.LIGHTGRAY,
+                    CornerRadii.EMPTY, Insets.EMPTY);
+            Background background = new Background(background_fill);
+            setBackground(background);
+
+            setUpNumMines();
+            setUpTime();
+            setUpFace();
+
+            getChildren().addAll(numMines, face, time);
+        }
+
+        private void setUpNumMines() {
+            numMines = new Label();
+
+            numMines.setText(String.valueOf(startMines));
+            numMines.setFont(new Font(40));
+            numMines.setTextFill(Color.RED);
+            numMines.setBackground(new Background(new BackgroundFill(Color.BLACK,
+                    CornerRadii.EMPTY, Insets.EMPTY)));
+            numMines.setBorder(new Border(new BorderStroke(Color.BLACK,
+                    BorderStrokeStyle.SOLID,
+                    CornerRadii.EMPTY,
+                    new BorderWidths(1))));
+            //numMines.setMinWidth(70);
+
+            setAlignment(numMines, Pos.CENTER_LEFT);
+
+
+        }
+
+        private void setUpTime() {
+            time = new Label();
+            time.setText("000");
+            time.setFont(new Font(40));
+            time.setTextFill(Color.RED);
+            time.setBackground(new Background(new BackgroundFill(Color.BLACK,
+                    CornerRadii.EMPTY, Insets.EMPTY)));
+            time.setBorder(new Border(new BorderStroke(Color.BLACK,
+                    BorderStrokeStyle.SOLID,
+                    CornerRadii.EMPTY,
+                    new BorderWidths(1))));
+
+
+            setAlignment(time, Pos.CENTER_RIGHT);
+        }
+
+        private void setUpFace() {
+            face = new Button();
+
+            face.setOnAction(event -> replay());
+            setAlignment(face, Pos.CENTER);
+
+            // Smiley face: 3 Circles and 1 Arc together in a Pane
+            Pane faceGraphic = new Pane();
+
+            Circle head = new Circle(15);
+            head.relocate(0, 0);
+            head.setFill(Color.GOLD);
+            head.setStroke(Color.BLACK);
+
+            Circle leftEye = new Circle(2);
+            leftEye.relocate(head.getLayoutX(), head.getLayoutY());
+            leftEye.setTranslateX(-7);
+            leftEye.setTranslateY(-6);
+
+            Circle rightEye = new Circle(2);
+            rightEye.relocate(head.getLayoutX(), head.getLayoutY());
+            rightEye.setTranslateX(3);
+            rightEye.setTranslateY(-6);
+
+            Arc smile = new Arc();
+            smile.relocate(head.getLayoutX(), head.getLayoutY());
+            smile.setTranslateY(3.5);
+            smile.setRadiusX(7.0f);
+            smile.setRadiusY(5.0f);
+            smile.setStartAngle(190f);
+            smile.setLength(160f);
+            smile.setType(ArcType.OPEN);
+            smile.setFill(null);
+            smile.setStroke(Color.BLACK);
+
+            faceGraphic.getChildren().addAll(head, leftEye, rightEye, smile);
+
+            face.setGraphic(faceGraphic);
+        }
+
+        public void setNumMinesText(int num) {
+            numMines.setText(String.valueOf(num));
+        }
+    }
+    // ******* End of Display Class **************
 
     public void start(Stage primaryStage) {
         primaryStage.setScene(new Scene(setUpScene()));
