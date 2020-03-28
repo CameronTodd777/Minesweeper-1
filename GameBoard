@@ -10,16 +10,20 @@ public class GameBoard extends Pane {
     private final double TILE_WIDTH, TILE_HEIGHT;
     private final int NUM_ROWS, NUM_COLS;
     private Tile[][] board;
+    private int numMines;
+    private Runner.Display display;
 
-    GameBoard(int numRows, int numCols, double tileWidth, double tileHeight) {
+    GameBoard(int numRows, int numCols, double tileWidth, double tileHeight, int numMines, Runner.Display display) {
         TILE_WIDTH = tileWidth;
         TILE_HEIGHT = tileHeight;
         NUM_ROWS = numRows;
         NUM_COLS = numCols;
+        this.numMines = numMines;
+        this.display = display;
         setPrefSize(NUM_COLS * TILE_WIDTH, NUM_ROWS * TILE_HEIGHT);
 
         setUpBoard();
-        placeRandomMines(50);
+        placeRandomMines(numMines);
         placeNumbers();
     }
 
@@ -125,16 +129,23 @@ public class GameBoard extends Pane {
                 temp.getLabel().setOpacity(1);
                 temp.setAvailable(false);
                 temp.setUpBackground(Color.WHITESMOKE);
-                temp.getFlag().setOpacity(0);
+                if(temp.getFlag().getOpacity() == 1) {
+                    temp.getFlag().setOpacity(0);
+                    numMines++;
+                }
                 rotation++;
             } else {//Tile label is 0
                 temp.setAvailable(false);
                 temp.setUpBackground(Color.WHITESMOKE);
-                temp.getFlag().setOpacity(0);
+                if(temp.getFlag().getOpacity() == 1) {
+                    temp.getFlag().setOpacity(0);
+                    numMines++;
+                }
                 clearBlanks(temp.getRow(), temp.getCol(), 0);
                 // Here iff rotation > 7 one layer deeper
                 rotation++;
             }
+
         }
 
         // In case it is a single blank
@@ -213,4 +224,19 @@ public class GameBoard extends Pane {
         return true;
     }
 
+    public void numMinesPlusPlus(){
+        numMines++;
+    }
+
+    public void numMinesMinusMinus(){
+        numMines--;
+    }
+
+    public int getNumMines(){
+        return numMines;
+    }
+
+    public Runner.Display getDisplay() {
+        return display;
+    }
 }
