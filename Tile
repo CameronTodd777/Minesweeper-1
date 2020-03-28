@@ -38,10 +38,16 @@ public class Tile extends StackPane {
                     return;
 
                 } else {
-                    if (label.getText().equals("0"))
+                    if (label.getText().equals("0")) {
                         gameBoard.clearBlanks(getRow(), getCol(), 0);
-                    else
+                        gameBoard.getDisplay().setNumMinesText(gameBoard.getNumMines());
+                    } else {
+                        if (flag.getOpacity() == 1)
+                            gameBoard.numMinesPlusPlus();
+
+                        gameBoard.getDisplay().setNumMinesText(gameBoard.getNumMines());
                         label.setOpacity(1);
+                    }
                 }
 
                 available = false;
@@ -52,8 +58,14 @@ public class Tile extends StackPane {
                     System.out.println("You a winner ha ha ha!");
                 }
 
-            } else if (event.getButton().equals(MouseButton.SECONDARY))
+            } else if (event.getButton().equals(MouseButton.SECONDARY)) {
+                if (flag.getOpacity() == 1)
+                    gameBoard.numMinesPlusPlus();
+                else
+                    gameBoard.numMinesMinusMinus();
                 toggleFlagIcon();
+                gameBoard.getDisplay().setNumMinesText(gameBoard.getNumMines());
+            }
         });
     }
 
