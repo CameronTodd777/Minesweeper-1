@@ -1,3 +1,5 @@
+package Minesweeper;
+
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -11,12 +13,15 @@ public class Tile extends StackPane {
     private Pane mine, flag;
     private Label label;
     private boolean available;
+    private final int ROW, COL;
 
-    Tile(double tileWidth, double tileHeight, GameBoard gameBoard) {
+    Tile(double tileWidth, double tileHeight, GameBoard gameBoard, int ROW, int COL) {
         TILE_WIDTH = tileWidth;
         TILE_HEIGHT = tileHeight;
         this.gameBoard = gameBoard;
         available = true;
+        this.ROW = ROW;
+        this.COL = COL;
 
         setUpBoarder();
         setUpBackground(Color.LIGHTGRAY);
@@ -26,16 +31,21 @@ public class Tile extends StackPane {
         getChildren().addAll(label);
 
         setOnMouseClicked(event -> {
+
             if (available == false)
                 return;
+
             if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (!gameBoard.getDisplay().isStarted()) {
+                    gameBoard.placeRandomMines(gameBoard.getNumMines(), ROW, COL);
+                    gameBoard.placeNumbers();
+                }
+
                 if (isMine()) {
                     gameBoard.getDisplay().stopTimer();
                     setUpBackground(Color.RED);
                     gameBoard.showAllMines();
                     gameBoard.makeAllUnavailable();
-
-                    System.out.println("Loser!");
                     return;
 
                 } else {
@@ -58,7 +68,8 @@ public class Tile extends StackPane {
                 if (gameBoard.isWon()) {
                     gameBoard.getDisplay().stopTimer();
                     gameBoard.makeAllUnavailable();
-                    System.out.println("You a winner ha ha ha!");
+                    gameBoard.showAllFlags();
+                    gameBoard.getDisplay().setButtonToSunglasses();
                 }
 
             } else if (event.getButton().equals(MouseButton.SECONDARY)) {
@@ -87,6 +98,7 @@ public class Tile extends StackPane {
     public void setUpFlagIcon() {
         flag = Icon.drawFlag(TILE_WIDTH, TILE_HEIGHT);
         flag.setOpacity(0);
+        flag.toFront();
         getChildren().addAll(flag);
     }
 
