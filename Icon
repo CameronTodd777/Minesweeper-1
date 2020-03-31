@@ -1,11 +1,10 @@
+package Minesweeper;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 
-// Static class containing the mine and flag icons.
+// Static class containing the mine, flag, smiley face
 public class Icon {
 
     public static Pane drawFlag(double TILE_WIDTH, double TILE_HEIGHT) {
@@ -74,5 +73,79 @@ public class Icon {
 
         mine.getChildren().addAll(backSlash, forwardSlash, vertical, horizontal, ellipse, rectangle);
         return mine;
+    }
+
+    public static Pane drawFace() {
+        // Smiley face: 3 Circles and 1 Arc together in a Pane
+        Pane faceGraphic = new Pane();
+
+        Circle head = new Circle(15);
+        head.relocate(0, 0);
+        head.setFill(Color.GOLD);
+        head.setStroke(Color.BLACK);
+
+        Circle leftEye = new Circle(2);
+        leftEye.relocate(head.getLayoutX(), head.getLayoutY());
+        leftEye.setTranslateX(-7);
+        leftEye.setTranslateY(-6);
+
+        Circle rightEye = new Circle(2);
+        rightEye.relocate(head.getLayoutX(), head.getLayoutY());
+        rightEye.setTranslateX(3);
+        rightEye.setTranslateY(-6);
+
+        Arc smile = new Arc();
+        smile.relocate(head.getLayoutX(), head.getLayoutY());
+        smile.setTranslateY(3.5);
+        smile.setRadiusX(7.0f);
+        smile.setRadiusY(5.0f);
+        smile.setStartAngle(190f);
+        smile.setLength(160f);
+        smile.setType(ArcType.OPEN);
+        smile.setFill(null);
+        smile.setStroke(Color.BLACK);
+
+        faceGraphic.getChildren().addAll(head, leftEye, rightEye, smile);
+
+        return faceGraphic;
+    }
+
+    public static Pane drawSunglasses() {
+        Pane faceGraphic = new Pane();
+
+        Circle head = new Circle(15);
+        head.relocate(0, 0);
+        head.setFill(Color.GOLD);
+        head.setStroke(Color.BLACK);
+
+        Circle leftSunglass = new Circle(4);
+        leftSunglass.relocate(head.getLayoutX(), head.getLayoutY());
+        leftSunglass.setTranslateX(-9);
+        leftSunglass.setTranslateY(-6);
+
+        Circle rightSunglass = new Circle(4);
+        rightSunglass.relocate(head.getLayoutX(), head.getLayoutY());
+        rightSunglass.setTranslateX(1);
+        rightSunglass.setTranslateY(-6);
+
+        Line topGlasses = new Line(10, 10, 20, 10);
+        Line leftGlasses = new Line(0, 15, 8, 10);
+        Line rightGlasses = new Line(22, 10, 30, 15);
+
+        Arc smile = new Arc();
+        smile.relocate(head.getLayoutX(), head.getLayoutY());
+        smile.setTranslateY(3.5);
+        smile.setRadiusX(7.0f);
+        smile.setRadiusY(5.0f);
+        smile.setStartAngle(190f);
+        smile.setLength(160f);
+        smile.setType(ArcType.OPEN);
+        smile.setFill(null);
+        smile.setStroke(Color.BLACK);
+
+        faceGraphic.getChildren().addAll(head, leftSunglass, rightSunglass, smile, topGlasses, leftGlasses, rightGlasses);
+
+        return faceGraphic;
+
     }
 }
