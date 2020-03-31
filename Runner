@@ -1,3 +1,5 @@
+package Minesweeper;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -8,9 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -170,6 +169,10 @@ public class Runner extends Application {
             digits++;
         }
 
+        public boolean isStarted() {
+            return timerStarted;
+        }
+
         public void startTimer() {
             if (timerStarted == true)
                 return;
@@ -192,37 +195,12 @@ public class Runner extends Application {
 
             setAlignment(face, Pos.CENTER);
 
-            // Smiley face: 3 Circles and 1 Arc together in a Pane
-            Pane faceGraphic = new Pane();
 
-            Circle head = new Circle(15);
-            head.relocate(0, 0);
-            head.setFill(Color.GOLD);
-            head.setStroke(Color.BLACK);
+            face.setGraphic(Icon.drawFace());
+        }
 
-            Circle leftEye = new Circle(2);
-            leftEye.relocate(head.getLayoutX(), head.getLayoutY());
-            leftEye.setTranslateX(-7);
-            leftEye.setTranslateY(-6);
-
-            Circle rightEye = new Circle(2);
-            rightEye.relocate(head.getLayoutX(), head.getLayoutY());
-            rightEye.setTranslateX(3);
-            rightEye.setTranslateY(-6);
-
-            Arc smile = new Arc();
-            smile.relocate(head.getLayoutX(), head.getLayoutY());
-            smile.setTranslateY(3.5);
-            smile.setRadiusX(7.0f);
-            smile.setRadiusY(5.0f);
-            smile.setStartAngle(190f);
-            smile.setLength(160f);
-            smile.setType(ArcType.OPEN);
-            smile.setFill(null);
-            smile.setStroke(Color.BLACK);
-
-            faceGraphic.getChildren().addAll(head, leftEye, rightEye, smile);
-            face.setGraphic(faceGraphic);
+        public void setButtonToSunglasses() {
+            face.setGraphic(Icon.drawSunglasses());
         }
 
     }
@@ -282,10 +260,10 @@ public class Runner extends Application {
                     Stage wrongInput = new Stage();
                     wrongInput.initModality(Modality.APPLICATION_MODAL);
                     Text text = new Text("Valid integer input ranges are:\n\n" +
-                            "0   <   Rows    <= 30\n" +
-                            "10  <=  Columns <= 60\n" +
-                            "0   <   Mines   <= Rows * Columns");
-                    text.setFont(new Font(14));
+                            "0  <   Rows    <= 30\n" +
+                            "10 <=  Columns <= 60\n" +
+                            "0  <   Mines   <  Rows * Columns");
+                    text.setFont(Font.font("Consolas", 16));
                     Button okay = new Button("Got it");
                     okay.setOnAction(event1 -> wrongInput.close());
                     VBox layout = new VBox();
@@ -318,7 +296,7 @@ public class Runner extends Application {
 
                 return tempRows > 0 && tempRows <= 30 &&
                         tempCols >= 10 && tempCols <= 60 &&
-                        tempMines <= tempRows * tempCols;
+                        tempMines < tempRows * tempCols;
             }
         }
 
